@@ -1,13 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Page loaded");
-
   const input = document.getElementById("gbpInput");
   const output = document.getElementById("inrOutput");
   const timestamp = document.getElementById("lastUpdated");
   const toggleBtn = document.getElementById("themeToggle");
 
   if (!input || !output || !timestamp) {
-    console.error("DOM elements missing.");
+    console.error("Missing DOM elements");
     return;
   }
 
@@ -15,41 +13,37 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("https://api.exchangerate.host/latest?base=GBP");
       const data = await response.json();
-      const rate = data?.rates?.INR;
 
-      if (!rate) {
-        throw new Error("INR rate not found in API response.");
+      if (!data || !data.rates || typeof data.rates.INR === 'undefined') {
+        throw new Error("INR rate not found in API response");
       }
 
+      const rate = data.rates.INR;
       const amount = parseFloat(input.value) || 0;
-      const converted = (rate * amount).toFixed(2);
-      output.textContent = converted;
-      timestamp.textContent = new Date().toLocaleString();
+      const result = (rate * amount).toFixed(2);
 
-    } catch (err) {
-      console.error("Error fetching or parsing rate:", err);
+      output.textContent = result;
+      timestamp.textContent = new Date().toLocaleString();
+    } catch (error) {
+      console.error("API fetch failed:", error);
       output.textContent = "Error";
       timestamp.textContent = "—";
     }
   }
 
   function toggleTheme() {
-    const current = document.documentElement.getAttribute("data-theme");
+    const html = document.documentElement;
+    const current = html.getAttribute("data-theme");
     const newTheme = current === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", newTheme);
+    html.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);
   }
 
-  // Initial setup
-  document.documentElement.setAttribute(
-    "data-theme",
-    localStorage.getItem("theme") || "light"
-  );
+  // Set initial theme
+  document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
 
-  // Bind events
   input.addEventListener("input", fetchRate);
   toggleBtn?.addEventListener("click", toggleTheme);
 
-  // First fetch
-  fetchRate();
+  fetchRate(); // Run once on load
 });
