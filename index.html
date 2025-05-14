@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GBP to INR</title>
+  <title>GBP to INR Converter</title>
   <meta name="description" content="Live British Pound to Indian Rupee converter with real-time rates.">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" />
   <style>
@@ -15,8 +15,8 @@
 <body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
 
   <header class="p-4 border-b flex justify-between items-center">
-    <h1 class="text-xl font-bold">GBP to INR</h1>
-    <button id="themeToggle" aria-label="Toggle dark mode" class="border px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+    <h1 class="text-xl font-bold">GBP to INR Converter</h1>
+    <button id="themeToggle" class="border px-3 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
       🌓 Theme
     </button>
   </header>
@@ -25,6 +25,7 @@
     <section class="bg-white dark:bg-gray-800 p-6 rounded shadow">
       <label for="gbpInput" class="block mb-2 font-medium">Amount in GBP:</label>
       <input type="number" id="gbpInput" value="1" class="w-full mb-4 p-2 rounded border dark:bg-gray-900 dark:border-gray-700" />
+      
       <p class="text-lg mb-2">
         <strong>= <span id="inrOutput">--</span> INR</strong>
       </p>
