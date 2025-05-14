@@ -30,22 +30,36 @@ function initConverter() {
 }
 
 async function fetchRate() {
+  const input = document.getElementById("gbpInput");
+  const output = document.getElementById("inrOutput");
+  const timestamp = document.getElementById("lastUpdated");
+
   try {
-    const input = document.getElementById("gbpInput");
-    const output = document.getElementById("inrOutput");
-    const timestamp = document.getElementById("lastUpdated");
-
-    const amount = parseFloat(input.value) || 0;
-
     const response = await fetch("https://api.exchangerate.host/latest?base=GBP&symbols=INR");
-    const data = await response.json();
-    const rate = data.rates.INR;
 
+    if (!response.ok) {
+      throw new Error("API response not OK");
+    }
+
+    const data = await response.json();
+
+    if (!data.rates || !data.rates.INR) {
+      throw new Error("Rate data missing");
+    }
+
+    const rate = data.rates.INR;
+    const amount = parseFloat(input.value) || 0;
     const result = (rate * amount).toFixed(2);
+
     output.textContent = result;
     timestamp.textContent = new Date().toLocaleString();
+
   } catch (error) {
     console.error("Error fetching exchange rate:", error);
-    document.getElementById("inrOutput").textContent = "Error";
+    output.textContent = "Error";
+    timestamp.textContent = "—";
+  }
+}
+
   }
 }
