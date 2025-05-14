@@ -21,4 +21,4 @@ async function fetchRate() {
   document.getElementById("lastUpdated").textContent = new Date().toLocaleString();
 }
 
-document.getElementById("gbpInput").addEventListener("input", fetchRate);
+document.getElementById("themeToggle").addEventListener("click", toggleTheme);
