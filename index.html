@@ -25,13 +25,8 @@
     <section class="bg-white dark:bg-gray-800 p-6 rounded shadow">
       <label for="gbpInput" class="block mb-2 font-medium">Amount in GBP:</label>
       <input type="number" id="gbpInput" value="1" class="w-full mb-4 p-2 rounded border dark:bg-gray-900 dark:border-gray-700" />
-      
-      <p class="text-lg mb-2">
-        <strong>= <span id="inrOutput">--</span> INR</strong>
-      </p>
-      <p class="text-sm text-gray-500 dark:text-gray-400">
-        Updated: <span id="lastUpdated">--</span>
-      </p>
+      <p class="text-lg mb-2"><strong>= <span id="inrOutput">--</span> INR</strong></p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Updated: <span id="lastUpdated">--</span></p>
     </section>
   </main>
 
@@ -39,6 +34,50 @@
     <p>© 2025 gbptoinr.com. All rights reserved.</p>
   </footer>
 
-  <script src="script.js?v=2" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const input = document.getElementById("gbpInput");
+      const output = document.getElementById("inrOutput");
+      const timestamp = document.getElementById("lastUpdated");
+      const toggleBtn = document.getElementById("themeToggle");
+
+      if (!input || !output || !timestamp || !toggleBtn) {
+        console.error("Missing required DOM elements.");
+        return;
+      }
+
+      async function fetchRate() {
+        try {
+          const res = await fetch("https://api.exchangerate.host/latest?base=GBP");
+          const data = await res.json();
+          const rate = data?.rates?.INR;
+
+          if (!rate) throw new Error("INR rate not found");
+
+          const amount = parseFloat(input.value) || 0;
+          const result = (rate * amount).toFixed(2);
+          output.textContent = result;
+          timestamp.textContent = new Date().toLocaleString();
+        } catch (error) {
+          console.error("Conversion error:", error);
+          output.textContent = "Error";
+          timestamp.textContent = "—";
+        }
+      }
+
+      function toggleTheme() {
+        const current = document.documentElement.getAttribute("data-theme");
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      }
+
+      // Setup
+      document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
+      toggleBtn.addEventListener("click", toggleTheme);
+      input.addEventListener("input", fetchRate);
+      fetchRate();
+    });
+  </script>
 </body>
 </html>
