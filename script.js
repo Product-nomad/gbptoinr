@@ -35,7 +35,7 @@ async function fetchRate() {
   const timestamp = document.getElementById("lastUpdated");
 
   try {
-    const response = await fetch("https://api.exchangerate.host/latest?base=GBP&symbols=INR");
+    const response = await fetch("https://api.exchangerate.host/latest?base=GBP");
 
     if (!response.ok) {
       throw new Error("API response not OK");
@@ -43,8 +43,8 @@ async function fetchRate() {
 
     const data = await response.json();
 
-    if (!data.rates || !data.rates.INR) {
-      throw new Error("Rate data missing");
+    if (!data.rates || typeof data.rates.INR === "undefined") {
+      throw new Error("INR rate not found in response");
     }
 
     const rate = data.rates.INR;
@@ -61,5 +61,3 @@ async function fetchRate() {
   }
 }
 
-  }
-}
