@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GBP to INR Converter</title>
-  <meta name="description" content="Live British Pound to Indian Rupee converter with real-time rates.">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" />
+  <meta name="description" content="Convert British Pounds (GBP) to Indian Rupees (INR) with live exchange rates.">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet" />
   <style>
     html[data-theme='dark'] {
       color-scheme: dark;
@@ -35,34 +35,15 @@
   </footer>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", function () {
       const input = document.getElementById("gbpInput");
       const output = document.getElementById("inrOutput");
       const timestamp = document.getElementById("lastUpdated");
       const toggleBtn = document.getElementById("themeToggle");
 
       if (!input || !output || !timestamp || !toggleBtn) {
-        console.error("Missing required DOM elements.");
+        console.error("Missing required elements.");
         return;
-      }
-
-      async function fetchRate() {
-        try {
-          const res = await fetch("https://api.exchangerate.host/latest?base=GBP");
-          const data = await res.json();
-          const rate = data?.rates?.INR;
-
-          if (!rate) throw new Error("INR rate not found");
-
-          const amount = parseFloat(input.value) || 0;
-          const result = (rate * amount).toFixed(2);
-          output.textContent = result;
-          timestamp.textContent = new Date().toLocaleString();
-        } catch (error) {
-          console.error("Conversion error:", error);
-          output.textContent = "Error";
-          timestamp.textContent = "—";
-        }
       }
 
       function toggleTheme() {
@@ -72,12 +53,32 @@
         localStorage.setItem("theme", next);
       }
 
-      // Setup
-      document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
+      async function fetchRate() {
+        try {
+          const res = await fetch("https://api.exchangerate.host/latest?base=GBP&symbols=INR");
+          const data = await res.json();
+          const rate = data?.rates?.INR;
+
+          if (!rate) throw new Error("Rate not found");
+
+          const amount = parseFloat(input.value) || 0;
+          const result = (amount * rate).toFixed(2);
+          output.textContent = result;
+          timestamp.textContent = new Date().toLocaleString();
+        } catch (err) {
+          console.error("Error fetching rate:", err);
+          output.textContent = "Error";
+          timestamp.textContent = "—";
+        }
+      }
+
       toggleBtn.addEventListener("click", toggleTheme);
       input.addEventListener("input", fetchRate);
+
+      document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
       fetchRate();
     });
   </script>
+
 </body>
 </html>
