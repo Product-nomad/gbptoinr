@@ -8,7 +8,9 @@ function initTheme() {
   document.documentElement.setAttribute('data-theme', savedTheme);
 
   const toggleBtn = document.getElementById("themeToggle");
-  toggleBtn.addEventListener("click", toggleTheme);
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", toggleTheme);
+  }
 }
 
 function toggleTheme() {
@@ -21,21 +23,29 @@ function toggleTheme() {
 
 function initConverter() {
   const input = document.getElementById("gbpInput");
-  input.addEventListener("input", fetchRate);
-  fetchRate(); // Run once on load
+  if (input) {
+    input.addEventListener("input", fetchRate);
+    fetchRate(); // Initial call on load
+  }
 }
 
 async function fetchRate() {
   try {
+    const input = document.getElementById("gbpInput");
+    const output = document.getElementById("inrOutput");
+    const timestamp = document.getElementById("lastUpdated");
+
+    const amount = parseFloat(input.value) || 0;
+
     const response = await fetch("https://api.exchangerate.host/latest?base=GBP&symbols=INR");
     const data = await response.json();
     const rate = data.rates.INR;
 
-    const amount = parseFloat(document.getElementById("gbpInput").value) || 0;
-    document.getElementById("inrOutput").textContent = (rate * amount).toFixed(2);
-    document.getElementById("lastUpdated").textContent = new Date().toLocaleString();
+    const result = (rate * amount).toFixed(2);
+    output.textContent = result;
+    timestamp.textContent = new Date().toLocaleString();
   } catch (error) {
-    console.error("Rate fetch failed:", error);
+    console.error("Error fetching exchange rate:", error);
     document.getElementById("inrOutput").textContent = "Error";
   }
 }
